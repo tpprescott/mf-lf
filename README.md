@@ -1,7 +1,7 @@
 # mf-lf
 Multifidelity Likelihood-free Inference
 
-Dependencies include ReactionNetworks.jl, a very small unregistered Julia package found at [ReactionNetworks.jl](github.com/tpprescott/ReactionNetworks.jl).
+Dependencies include ReactionNetworks.jl, a very small unregistered Julia package found at [ReactionNetworks.jl](https://www.github.com/tpprescott/ReactionNetworks.jl).
 
 To generate each of the data files required to produce plots similar to those in the paper, run in terminal
 ```
