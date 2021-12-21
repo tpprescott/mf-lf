@@ -14,4 +14,13 @@ MFABC_output = EnzymeMFABC.do_mfabc.([40_000, 80_000, 160_000, 320_000, 640_000]
     GD_batch = 1,
 )
 
-save("MFABC_output.jld2", Dict("data" => MFABC_output))
+c = map(MFABC_output) do (S, μ)
+	sum(S.c_lo .+ S.Σc_hi)
+end
+v = map(MFABC_output) do (S, μ)
+    Ḡ = mean(EnzymeMFABC.G, S)
+	w_mf = S.L_lo .+ (S.ΣL_mf./S.μ)
+	sum((w_mf .* (EnzymeMFABC.G.(S.θ) .- Ḡ)).^2) / sum(w_mf)^2
+end
+
+save("MFABC_output.jld2", Dict("c" => c, "v" => v))

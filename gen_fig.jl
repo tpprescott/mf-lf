@@ -7,42 +7,22 @@ end
 using Plots, StatsBase, Statistics, LaTeXStrings
 using FileIO, JLD2
 
-ABC_stats = load("ABC_stats.jld2", "data")
+ABC_stats = load("ABC_stats.jld2")
 BSL_stats = load("BSL_stats.jld2", "data")
 MFABC_output = load("MFABC_output.jld2", "data")
 MFBSL_output = load("MFBSL_output.jld2", "data")
 
-c_abc = map(ABC_stats) do x
-    x[3]
-end
-v_abc = map(ABC_stats) do x
-    x[2]
-end
+c_abc = ABC_stats["c"]
+v_abc = ABC_stats["v"]
 
-c_mfabc = map(MFABC_output) do (S, μ)
-	sum(S.c_lo .+ S.Σc_hi)
-end
-v_mfabc = map(MFABC_output) do (S, μ)
-    Ḡ = mean(EnzymeMFABC.G, S)
-	w_mf = S.L_lo .+ (S.ΣL_mf./S.μ)
-	sum((w_mf .* (EnzymeMFABC.G.(S.θ) .- Ḡ)).^2) / sum(w_mf)^2
-end
+c_mfabc = MFABC_output["c"]
+v_mfabc = MFABC_output["v"]
 
-c_bsl = map(BSL_stats) do x
-    x[3]
-end
-v_bsl = map(BSL_stats) do x
-    x[2]
-end
+c_bsl = BSL_stats["c"]
+v_bsl = BSL_stats["v"]
 
-c_mfbsl = map(MFBSL_output) do (S, μ)
-	sum(S.c_lo .+ S.Σc_hi)
-end
-v_mfbsl = map(MFBSL_output) do (S, μ)
-    Ḡ = mean(EnzymeMFABC.G, S)
-	w_mf = S.L_lo .+ (S.ΣL_mf./S.μ)
-	sum((w_mf .* (EnzymeMFABC.G.(S.θ) .- Ḡ)).^2) / sum(w_mf)^2
-end
+c_mfabc = MFABC_output["c"]
+v_mfabc = MFABC_output["v"]
 
 
 function big_fig(c, c_mf, v, v_mf, S, μ, μ_t, ν_t; alg::String, iterticks=:auto, kwargs...)
