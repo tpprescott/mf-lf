@@ -8,24 +8,32 @@ using Plots, StatsBase, Statistics, LaTeXStrings
 using FileIO, JLD2
 
 ABC_stats = load("ABC_stats.jld2")
-BSL_stats = load("BSL_stats.jld2", "data")
-MFABC_output = load("MFABC_output.jld2", "data")
-MFBSL_output = load("MFBSL_output.jld2", "data")
+MFABC_output = load("MFABC_output.jld2")
+BSL_stats = load("BSL_stats.jld2")
+MFBSL_output = load("MFBSL_output.jld2")
 
 c_abc = ABC_stats["c"]
 v_abc = ABC_stats["v"]
 
 c_mfabc = MFABC_output["c"]
 v_mfabc = MFABC_output["v"]
+w_mfabc = MFABC_output["w_mf"]
+μ_mfabc = MFABC_output["μ"]
+μ_t_mfabc = MFABC_output["μ_t"]
+ν_t_mfabc = MFABC_output["ν_t"]
 
 c_bsl = BSL_stats["c"]
 v_bsl = BSL_stats["v"]
 
-c_mfabc = MFABC_output["c"]
-v_mfabc = MFABC_output["v"]
+c_mfbsl = MFBSL_output["c"]
+v_mfbsl = MFBSL_output["v"]
+w_mfbsl = MFBSL_output["w_mf"]
+μ_mfbsl = MFBSL_output["μ"]
+μ_t_mfbsl = MFBSL_output["μ_t"]
+ν_t_mfbsl = MFBSL_output["ν_t"]
 
 
-function big_fig(c, c_mf, v, v_mf, S, μ, μ_t, ν_t; alg::String, iterticks=:auto, kwargs...)
+function big_fig(c, c_mf, v, v_mf, w_mf_sparse, μ, μ_t, ν_t; alg::String, iterticks=:auto, kwargs...)
     
     # Comparison
     compare = plot(;
@@ -47,25 +55,7 @@ function big_fig(c, c_mf, v, v_mf, S, μ, μ_t, ν_t; alg::String, iterticks=:au
     plot!(compare, c, v, label=alg, markershape=:square)
     plot!(compare, c_mf, v_mf, label="MF-"*alg, markershape=:star)
 
-    dd = 100
-    D_idx = dd:dd:size(μ_t,1)
-    mufig = plot(D_idx, selectdim(μ_t, 1, D_idx),
-        title="(c) Mean function values",
-        ylabel=L"\log(\nu_k)",
-        xlabel="Iteration",
-        legend=:none,
-        xticks=iterticks,
-        fontfamily="Computer Modern",
-        guidefontsize=10,
-        tickfontsize=10,
-        titlefontsize=12,
-        dpi=400,
-        size=(450,300),
-    )
-    
-    w_mf = S.L_lo .+ (S.ΣL_mf ./ S.μ)
-    interesting = findall(p->(!iszero(p.ΣL_mf2)), S)
-    wmffig = scatter(interesting, w_mf[interesting],
+    wmffig = scatter(selectdim(w_mf_sparse, 2, 1), selectdim(w_mf_sparse, 2, 2),
             title="(b) Multifidelity weights",
             ylabel=L"w_{mf}",
             xlabel="Iteration",
@@ -83,9 +73,24 @@ function big_fig(c, c_mf, v, v_mf, S, μ, μ_t, ν_t; alg::String, iterticks=:au
             size=(450,300),
     )
     
+    D_idx = 100 .* (1:size(μ_t,1))
+    mufig = plot(D_idx, μ_t,
+        title="(c) Mean function values",
+        ylabel=L"\log(\nu_k)",
+        xlabel="Iteration",
+        legend=:none,
+        xticks=iterticks,
+        fontfamily="Computer Modern",
+        guidefontsize=10,
+        tickfontsize=10,
+        titlefontsize=12,
+        dpi=400,
+        size=(450,300),
+    )
+    
     compare_nu(j) = hcat(μ_t[:, j], log.(ν_t[:, j]))
     nunu = compare_nu(1)
-    adaptfig = plot(nunu;
+    adaptfig = plot(D_idx, nunu;
         label=["Adaptive mean" "Optimal mean estimate"],
         title="(d) Adaptive mean function",
         xlabel="Iteration",
@@ -117,8 +122,8 @@ function big_fig(c, c_mf, v, v_mf, S, μ, μ_t, ν_t; alg::String, iterticks=:au
     return figout
 end
 
-figABC = big_fig(c_abc, c_mfabc, v_abc, v_mfabc, MFABC_output[end]...; alg="ABC", iterticks=[200_000, 400_000, 600_000])
-figBSL = big_fig(c_bsl, c_mfbsl, v_bsl, v_mfbsl, MFBSL_output[end]...; alg="BSL", iterticks=[20_000, 40_000, 60_000])
+figABC = big_fig(c_abc, c_mfabc, v_abc, v_mfabc, w_mfabc, μ_mfabc, μ_t_mfabc, ν_t_mfabc; alg="ABC", iterticks=[200_000, 400_000, 600_000])
+figBSL = big_fig(c_bsl, c_mfbsl, v_bsl, v_mfbsl, w_mfbsl, μ_mfbsl, μ_t_mfbsl, ν_t_mfbsl; alg="BSL", iterticks=[20_000, 40_000, 60_000])
 
 traj_data = load("eg_traj.jld2")
 trajfig = scatter(
