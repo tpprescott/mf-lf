@@ -1,0 +1,48 @@
+\begin{algorithmic}
+\Require $\theta=(k_1, k_{-1}, k_2)$; $y_{\lo} = (y_1, y_2, \dots, y_{10})$.
+\If{$ y_{7} \leq 13.867 $}
+\State \Return $\nu_{1} = 0.084$.
+\Else
+\If{$ k_2 \leq 1.14 $
+}\If{$ y_{8} \leq 16.219 $}
+\State \Return $\nu_{2} = 0.616$.
+\Else
+\If{$ k_2 \leq 0.88 $
+}\State \Return $\nu_{3} = 0.08$.
+\Else
+\If{$ y_{10} \leq 26.208 $}
+\If{$ k_{1} \leq 91.265 $
+}\State \Return $\nu_{4} = 0.313$.
+\Else
+\State \Return $\nu_{5} = 0.76$.
+\EndIf
+\Else
+\If{$ y_{7} \leq 15.151 $}
+\State \Return $\nu_{6} = 0.761$.
+\Else
+\If{$ y_{1} \leq 3.371 $}
+\If{$ y_{5} \leq 11.264 $}
+\State \Return $\nu_{7} = 0.688$.
+\Else
+\State \Return $\nu_{8} = 0.467$.
+\EndIf
+\Else
+\State \Return $\nu_{9} = 0.797$.
+\EndIf
+\EndIf
+\EndIf
+\EndIf
+\EndIf
+\Else
+\If{$ y_{10} \leq 26.136 $}
+\If{$ y_{7} \leq 14.17 $}
+\State \Return $\nu_{10} = 0.929$.
+\Else
+\State \Return $\nu_{11} = 0.828$.
+\EndIf
+\Else
+\State \Return $\nu_{12} = 1.439$.
+\EndIf
+\EndIf
+\EndIf
+\end{algorithmic}

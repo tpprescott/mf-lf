@@ -2,6 +2,7 @@
 Multifidelity Likelihood-free Inference
 
 Dependencies include ReactionNetworks.jl, a very small unregistered Julia package found at [ReactionNetworks.jl](https://www.github.com/tpprescott/ReactionNetworks.jl).
+This package also exports the enzyme kinetics reaction network used as an example in this code.
 
 To generate each of the data files required to produce plots similar to those in the paper, run in terminal
 ```
